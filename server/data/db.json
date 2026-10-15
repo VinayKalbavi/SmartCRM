@@ -1,0 +1,205 @@
+{
+  "customersCrm": {
+    "1": {
+      "tags": [
+        "VIP",
+        "Key Account",
+        "Enterprise"
+      ],
+      "owner": "Priya Patel",
+      "preferredContact": "WhatsApp",
+      "notes": "Key account - primary contact for enterprise gifting orders."
+    },
+    "2": {
+      "tags": [
+        "Loyal",
+        "Repeat Buyer"
+      ],
+      "owner": "Rahul Verma",
+      "preferredContact": "Phone",
+      "notes": "Prefers evening calls after 6 PM."
+    },
+    "3": {
+      "tags": [
+        "New",
+        "Inquiry"
+      ],
+      "owner": "Priya Patel",
+      "preferredContact": "Email",
+      "notes": "Interested in upcoming summer catalogue."
+    },
+    "4": {
+      "tags": [
+        "At-Risk",
+        "Needs Win-Back"
+      ],
+      "owner": "Ananya Iyer",
+      "preferredContact": "Email",
+      "notes": "Has not ordered in 75 days. Send discount coupon."
+    }
+  },
+  "interactions": [
+    {
+      "id": "int-5490be03",
+      "customerId": "1",
+      "type": "call",
+      "summary": "Smoke test verification call: confirmed delivery satisfaction.",
+      "createdAt": "2026-10-15T10:00:45.408Z"
+    },
+    {
+      "id": "int-30e8fade",
+      "customerId": "1",
+      "type": "note",
+      "summary": "PERSISTENCE VERIFICATION NOTE #1792056340484",
+      "createdAt": "2026-10-15T09:25:40.485Z"
+    },
+    {
+      "id": "int-b18697fc",
+      "customerId": "1",
+      "type": "meeting",
+      "summary": "VERIFIED DEMO NOTE: Reviewed quarterly wholesale orders via Zoom with Aarav.",
+      "createdAt": "2026-10-15T09:25:40.438Z"
+    },
+    {
+      "id": "int-591a9ff0",
+      "customerId": "1",
+      "type": "call",
+      "summary": "Smoke test verification call: confirmed delivery satisfaction.",
+      "createdAt": "2026-10-15T09:15:54.887Z"
+    },
+    {
+      "id": "int-101",
+      "customerId": "1",
+      "type": "call",
+      "summary": "Discussed bulk festive order requirements for Diwali corporate gifts.",
+      "createdAt": "2026-10-01T09:08:38.128Z"
+    },
+    {
+      "id": "int-102",
+      "customerId": "1",
+      "type": "email",
+      "summary": "Sent custom pricing catalog and wholesale volume discount slabs.",
+      "createdAt": "2026-10-05T09:08:38.128Z"
+    },
+    {
+      "id": "int-103",
+      "customerId": "1",
+      "type": "meeting",
+      "summary": "Quarterly account review via Zoom. Customer expressed strong satisfaction with delivery speed.",
+      "createdAt": "2026-10-10T09:08:38.128Z"
+    },
+    {
+      "id": "int-104",
+      "customerId": "1",
+      "type": "note",
+      "summary": "Requested tax invoice with registered GST number for previous bulk order.",
+      "createdAt": "2026-10-14T09:08:38.128Z"
+    },
+    {
+      "id": "int-105",
+      "customerId": "2",
+      "type": "call",
+      "summary": "Followed up on recent shipment delivery. Everything arrived in good condition.",
+      "createdAt": "2026-10-08T09:08:38.128Z"
+    },
+    {
+      "id": "int-106",
+      "customerId": "3",
+      "type": "email",
+      "summary": "Welcome email sent with 10% coupon code for first order.",
+      "createdAt": "2026-10-12T09:08:38.128Z"
+    }
+  ],
+  "followups": [
+    {
+      "id": "fol-fab7222b",
+      "customerId": "1",
+      "title": "Smoke Test Scheduled Check-in",
+      "dueDate": "2026-10-16T10:00:45.419Z",
+      "status": "completed",
+      "createdAt": "2026-10-15T10:00:45.427Z",
+      "completedAt": "2026-10-15T10:00:45.431Z"
+    },
+    {
+      "id": "fol-2ddbb345",
+      "customerId": "1",
+      "title": "PERSISTENCE VERIFICATION TASK #1792056340484",
+      "dueDate": "2026-10-20T09:25:40.488Z",
+      "status": "pending",
+      "createdAt": "2026-10-15T09:25:40.492Z",
+      "completedAt": null
+    },
+    {
+      "id": "fol-a5ab981a",
+      "customerId": "1",
+      "title": "VERIFIED DEMO TASK: Deliver festive gift samples to Aarav Sharma",
+      "dueDate": "2026-10-19T09:25:40.447Z",
+      "status": "completed",
+      "createdAt": "2026-10-15T09:25:40.450Z",
+      "completedAt": "2026-10-15T09:25:40.455Z"
+    },
+    {
+      "id": "fol-161f294a",
+      "customerId": "1",
+      "title": "Smoke Test Scheduled Check-in",
+      "dueDate": "2026-10-16T09:15:54.903Z",
+      "status": "completed",
+      "createdAt": "2026-10-15T09:15:54.909Z",
+      "completedAt": "2026-10-15T09:15:54.919Z"
+    },
+    {
+      "id": "fol-201",
+      "customerId": "1",
+      "title": "Send updated winter product catalog & lookbook",
+      "dueDate": "2026-10-07T09:08:38.128Z",
+      "status": "completed",
+      "createdAt": "2026-10-03T09:08:38.128Z",
+      "completedAt": "2026-10-07T09:08:38.128Z"
+    },
+    {
+      "id": "fol-202",
+      "customerId": "1",
+      "title": "Confirm GST invoice generation and dispatch",
+      "dueDate": "2026-10-11T09:08:38.128Z",
+      "status": "completed",
+      "createdAt": "2026-10-08T09:08:38.128Z",
+      "completedAt": "2026-10-11T09:08:38.128Z"
+    },
+    {
+      "id": "fol-203",
+      "customerId": "1",
+      "title": "Follow up on festive corporate gift sample approval",
+      "dueDate": "2026-10-18T09:08:38.128Z",
+      "status": "pending",
+      "createdAt": "2026-10-13T09:08:38.128Z",
+      "completedAt": null
+    },
+    {
+      "id": "fol-204",
+      "customerId": "1",
+      "title": "Check on courier tracking for custom engraved samples",
+      "dueDate": "2026-10-13T09:08:38.128Z",
+      "status": "pending",
+      "createdAt": "2026-10-09T09:08:38.128Z",
+      "completedAt": null
+    },
+    {
+      "id": "fol-205",
+      "customerId": "2",
+      "title": "Send replenishment reminder for quarterly supplies",
+      "dueDate": "2026-10-20T09:08:38.128Z",
+      "status": "pending",
+      "createdAt": "2026-10-14T09:08:38.128Z",
+      "completedAt": null
+    },
+    {
+      "id": "fol-206",
+      "customerId": "4",
+      "title": "Execute win-back campaign call with 20% discount offer",
+      "dueDate": "2026-10-14T09:08:38.128Z",
+      "status": "pending",
+      "createdAt": "2026-10-10T09:08:38.128Z",
+      "completedAt": null
+    }
+  ]
+}

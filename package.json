@@ -1,0 +1,23 @@
+{
+  "name": "smartcrm-hub",
+  "version": "1.0.0",
+  "description": "SmartCRM - WooCommerce Customer Hub",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "setup": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "seed:mock": "cd server && npm run seed:mock",
+    "test:woo": "cd server && npm run test:woo",
+    "seed:woo": "cd server && npm run seed:woo",
+    "test:smoke": "cd server && npm run test:smoke"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
