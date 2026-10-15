@@ -26,12 +26,26 @@ const FollowupSchema = new mongoose.Schema({
   completedAt: { type: String, default: null },
 });
 
+const UserSchema = new mongoose.Schema({
+  id: { type: String, unique: true, index: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
+  passwordHash: { type: String, default: null },
+  googleId: { type: String, default: null, sparse: true, index: true },
+  picture: { type: String, default: null },
+  resetToken: { type: String, default: null },
+  resetTokenExpiry: { type: Date, default: null },
+  createdAt: { type: Date, default: Date.now },
+});
+
 const CustomerCrm = mongoose.models.CustomerCrm || mongoose.model('CustomerCrm', CustomerCrmSchema);
 const Interaction = mongoose.models.Interaction || mongoose.model('Interaction', InteractionSchema);
 const Followup = mongoose.models.Followup || mongoose.model('Followup', FollowupSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 module.exports = {
   CustomerCrm,
   Interaction,
   Followup,
+  User,
 };

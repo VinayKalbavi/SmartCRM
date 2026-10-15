@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const { CustomerCrm, Interaction, Followup } = require('./models');
+const { CustomerCrm, Interaction, Followup, User } = require('./models');
 
 class MongoCrmRepository {
   async init() {
@@ -236,6 +236,60 @@ class MongoCrmRepository {
 
     await existing.save();
     return existing.toObject();
+  }
+
+  // User methods
+  async findUserByEmail(email) {
+    if (!email) return null;
+    return User.findOne({ email: email.toLowerCase().trim() }).lean();
+  }
+
+  async findUserById(id) {
+    if (!id) return null;
+    return User.findOne({ id: String(id) }).lean();
+  }
+
+  async findUserByGoogleId(googleId) {
+    if (!googleId) return null;
+    return User.findOne({ googleId: String(googleId) }).lean();
+  }
+
+  async findUserByResetToken(token) {
+    if (!token) return null;
+    return User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() }
+    }).lean();
+  }
+
+  async createUser(userData) {
+    const id = userData.id || `usr-${uuidv4().slice(0, 8)}`;
+    const created = await User.create({
+      id,
+      name: userData.name,
+      email: userData.email.toLowerCase().trim(),
+      passwordHash: userData.passwordHash || null,
+      googleId: userData.googleId || null,
+      picture: userData.picture || null,
+      createdAt: userData.createdAt || new Date(),
+    });
+    return created.toObject();
+  }
+
+  async updateUser(id, updates) {
+    const user = await User.findOne({ id: String(id) });
+    if (!user) return null;
+    
+    if (updates.name !== undefined) user.name = updates.name;
+    if (updates.email !== undefined) user.email = updates.email.toLowerCase().trim();
+    if (updates.passwordHash !== undefined) user.passwordHash = updates.passwordHash;
+    if (updates.googleId !== undefined) user.googleId = updates.googleId;
+    if (updates.picture !== undefined) user.picture = updates.picture;
+    if (updates.resetToken !== undefined) user.resetToken = updates.resetToken;
+    if (updates.resetTokenExpiry !== undefined) user.resetTokenExpiry = updates.resetTokenExpiry;
+
+    await user.save();
+    return user.toObject();
   }
 }
 

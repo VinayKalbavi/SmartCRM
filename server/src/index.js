@@ -5,6 +5,8 @@ const config = require('./config');
 const crmRepo = require('./db/crmRepository');
 
 const healthRoutes = require('./routes/healthRoutes');
+const authRoutes = require('./routes/authRoutes');
+const authMiddleware = require('./middleware/authMiddleware');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const followupRoutes = require('./routes/followupRoutes');
@@ -20,12 +22,15 @@ app.use(morgan('dev'));
 // Auto-seed check on startup
 crmRepo.init();
 
-// Mount API routes
+// Mount public API routes
 app.use('/api', healthRoutes);
-app.use('/api', dashboardRoutes);
-app.use('/api', customerRoutes);
-app.use('/api', followupRoutes);
-app.use('/api', exportRoutes);
+app.use('/api', authRoutes);
+
+// Mount protected API routes
+app.use('/api', authMiddleware, dashboardRoutes);
+app.use('/api', authMiddleware, customerRoutes);
+app.use('/api', authMiddleware, followupRoutes);
+app.use('/api', authMiddleware, exportRoutes);
 
 // Root route
 app.get('/', (req, res) => {

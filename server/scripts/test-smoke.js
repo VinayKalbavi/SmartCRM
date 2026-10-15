@@ -41,6 +41,55 @@ async function runSmokeTests() {
     return `Connected: ${res.data.connected}, Customers: ${res.data.customerCount}, Orders: ${res.data.orderCount}`;
   });
 
+  // 2b. Auth: Verify 401 on protected route without token
+  await test('GET /api/dashboard/summary without token (expect 401)', async () => {
+    try {
+      await axios.get(`${BASE_URL}/dashboard/summary`);
+      throw new Error('Should have failed with 401');
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        return 'Correctly received 401 Unauthorized';
+      }
+      throw err;
+    }
+  });
+
+  // 2c. Auth: Register / Login test user
+  let authToken = null;
+  await test('POST /api/auth/register (or login)', async () => {
+    const testEmail = `smoketest_${Date.now()}@smartcrm.local`;
+    const testPassword = 'Password123!';
+    try {
+      const regRes = await axios.post(`${BASE_URL}/auth/register`, {
+        name: 'Smoke Test Admin',
+        email: testEmail,
+        password: testPassword,
+        confirmPassword: testPassword,
+      });
+      authToken = regRes.data.token;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+      return `Registered new test user: ${regRes.data.user.email}`;
+    } catch (err) {
+      if (err.response?.status === 409) {
+        const loginRes = await axios.post(`${BASE_URL}/auth/login`, {
+          email: testEmail,
+          password: testPassword,
+        });
+        authToken = loginRes.data.token;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+        return `Logged in existing test user: ${loginRes.data.user.email}`;
+      }
+      throw err;
+    }
+  });
+
+  // 2d. Auth: GET /api/auth/me
+  await test('GET /api/auth/me', async () => {
+    const res = await axios.get(`${BASE_URL}/auth/me`);
+    if (!res.data.user || !res.data.user.email) throw new Error('Failed to retrieve current user');
+    return `Authenticated as: ${res.data.user.name} (${res.data.user.email})`;
+  });
+
   // 3. Sync
   await test('POST /api/sync', async () => {
     const res = await axios.post(`${BASE_URL}/sync`);

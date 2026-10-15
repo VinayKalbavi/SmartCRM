@@ -13,6 +13,8 @@ module.exports = {
     consumerSecret: process.env.WOOCOMMERCE_CONSUMER_SECRET || '',
   },
   mongodbUri: process.env.MONGODB_URI || '',
+  jwtSecret: process.env.JWT_SECRET || 'smartcrm_jwt_super_secret_key_8f3a8b92c4e1f0e6b7d5a3c2e1f4a9b8',
+  googleClientId: process.env.GOOGLE_CLIENT_ID || 'placeholder-google-client-id.apps.googleusercontent.com',
   dataPath: path.join(__dirname, '../data'),
   dbJsonPath: path.join(__dirname, '../data/db.json'),
   mockWooJsonPath: path.join(__dirname, '../data/mock-woo.json'),

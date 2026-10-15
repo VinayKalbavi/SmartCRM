@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Search, RefreshCw, AlertTriangle, Menu, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, RefreshCw, AlertTriangle, Menu, ShieldCheck, User as UserIcon, LogOut, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getWooStatus, syncWoo } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function Topbar({ onOpenMobileMenu }) {
   const [status, setStatus] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const fetchStatus = async () => {
@@ -21,6 +26,17 @@ export default function Topbar({ onOpenMobileMenu }) {
 
   useEffect(() => {
     fetchStatus();
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
   const handleSync = async () => {
@@ -43,6 +59,8 @@ export default function Topbar({ onOpenMobileMenu }) {
       navigate(`/customers?search=${encodeURIComponent(globalSearch.trim())}`);
     }
   };
+
+  const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
 
   return (
     <header className="sticky top-0 z-30 bg-[#101115]/90 backdrop-blur-md border-b border-white/[0.06] shadow-[0_4px_24px_rgba(0,0,0,0.45)]">
@@ -135,20 +153,74 @@ export default function Topbar({ onOpenMobileMenu }) {
             <span className="hidden sm:inline">{syncing ? 'Syncing...' : 'Sync'}</span>
           </button>
 
-          {/* User profile avatar with luminous glow */}
-          <div className="flex items-center gap-2.5 pl-2 border-l border-white/10">
-            <div className="relative">
-              <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Camille&backgroundColor=b6e3f4"
-                alt="Profile"
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full ring-2 ring-[#B8F55A]/60 shadow-[0_0_12px_rgba(184,245,90,0.35)] object-cover bg-[#222]"
-              />
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[#B8F55A] rounded-full border-2 border-[#121212]" />
-            </div>
-            <div className="hidden xl:block text-left">
-              <div className="text-xs font-bold text-white leading-tight">Camille R.</div>
-              <div className="text-[10px] text-[#8A8A8A]">Admin</div>
-            </div>
+          {/* User profile avatar with dropdown menu */}
+          <div className="relative pl-2 border-l border-white/10" ref={dropdownRef}>
+            <button
+              onClick={() => setUserDropdownOpen((prev) => !prev)}
+              className="flex items-center gap-2.5 focus:outline-none group rounded-full p-0.5"
+              aria-label="User profile menu"
+            >
+              <div className="relative">
+                {user?.picture ? (
+                  <img
+                    src={user.picture}
+                    alt={user.name || 'User'}
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full ring-2 ring-[#B8F55A]/60 shadow-[0_0_12px_rgba(184,245,90,0.35)] object-cover bg-[#222]"
+                  />
+                ) : (
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full ring-2 ring-[#B8F55A]/60 shadow-[0_0_12px_rgba(184,245,90,0.35)] bg-gradient-to-br from-[#292A32] to-[#18191E] flex items-center justify-center font-bold text-xs sm:text-sm text-[#B8F55A]">
+                    {userInitial}
+                  </div>
+                )}
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[#B8F55A] rounded-full border-2 border-[#121212]" />
+              </div>
+
+              <div className="hidden xl:block text-left">
+                <div className="text-xs font-bold text-white leading-tight group-hover:text-[#B8F55A] transition-colors truncate max-w-[120px]">
+                  {user?.name || 'My Account'}
+                </div>
+                <div className="text-[10px] text-[#8A8A8A] flex items-center gap-1">
+                  <span>SmartCRM</span>
+                  <ChevronDown className="w-2.5 h-2.5" />
+                </div>
+              </div>
+            </button>
+
+            {/* Dropdown Menu */}
+            {userDropdownOpen && (
+              <div className="absolute right-0 mt-3 w-56 rounded-2xl card-sheen border border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.8)] py-2 z-50 text-xs animate-in fade-in zoom-in-95 duration-150">
+                {/* User info banner */}
+                <div className="px-4 py-2.5 border-b border-white/10">
+                  <div className="font-bold text-white text-xs truncate">{user?.name}</div>
+                  <div className="text-[11px] text-[#8A8A8A] truncate">{user?.email}</div>
+                </div>
+
+                <div className="p-1 space-y-0.5">
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      navigate('/profile');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEDED] hover:bg-white/10 hover:text-[#B8F55A] transition-colors text-left"
+                  >
+                    <UserIcon className="w-4 h-4 text-[#B8F55A]" />
+                    <span className="font-medium">Profile</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      logout();
+                      navigate('/login');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span className="font-medium">Logout</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

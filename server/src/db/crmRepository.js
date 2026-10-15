@@ -10,6 +10,7 @@ class JsonCrmRepository {
       customersCrm: {}, // customerId -> { tags: [], owner: '', preferredContact: '' }
       interactions: [], // [{ id, customerId, type, summary, createdAt }]
       followups: [],   // [{ id, customerId, title, dueDate, status, createdAt, completedAt }]
+      users: [],       // [{ id, name, email, passwordHash, googleId, picture, resetToken, resetTokenExpiry, createdAt }]
     };
     this.init();
   }
@@ -29,6 +30,7 @@ class JsonCrmRepository {
             customersCrm: parsed.customersCrm || {},
             interactions: parsed.interactions || [],
             followups: parsed.followups || [],
+            users: parsed.users || [],
           };
         }
       } catch (err) {
@@ -305,6 +307,67 @@ class JsonCrmRepository {
     this.save();
     return this.data.followups[index];
   }
+
+  // User methods for JSON store
+  async findUserByEmail(email) {
+    if (!email) return null;
+    const clean = email.toLowerCase().trim();
+    return (this.data.users || []).find(u => u.email.toLowerCase() === clean) || null;
+  }
+
+  async findUserById(id) {
+    if (!id) return null;
+    return (this.data.users || []).find(u => String(u.id) === String(id)) || null;
+  }
+
+  async findUserByGoogleId(googleId) {
+    if (!googleId) return null;
+    return (this.data.users || []).find(u => String(u.googleId) === String(googleId)) || null;
+  }
+
+  async findUserByResetToken(token) {
+    if (!token) return null;
+    const now = new Date();
+    return (this.data.users || []).find(u => u.resetToken === token && new Date(u.resetTokenExpiry) > now) || null;
+  }
+
+  async createUser(userData) {
+    const id = userData.id || `usr-${uuidv4().slice(0, 8)}`;
+    const user = {
+      id,
+      name: userData.name,
+      email: userData.email.toLowerCase().trim(),
+      passwordHash: userData.passwordHash || null,
+      googleId: userData.googleId || null,
+      picture: userData.picture || null,
+      resetToken: null,
+      resetTokenExpiry: null,
+      createdAt: userData.createdAt || new Date().toISOString(),
+    };
+    if (!this.data.users) this.data.users = [];
+    this.data.users.push(user);
+    this.save();
+    return { ...user };
+  }
+
+  async updateUser(id, updates) {
+    if (!this.data.users) this.data.users = [];
+    const idx = this.data.users.findIndex(u => String(u.id) === String(id));
+    if (idx === -1) return null;
+    const existing = this.data.users[idx];
+    this.data.users[idx] = {
+      ...existing,
+      ...(updates.name !== undefined ? { name: updates.name } : {}),
+      ...(updates.email !== undefined ? { email: updates.email.toLowerCase().trim() } : {}),
+      ...(updates.passwordHash !== undefined ? { passwordHash: updates.passwordHash } : {}),
+      ...(updates.googleId !== undefined ? { googleId: updates.googleId } : {}),
+      ...(updates.picture !== undefined ? { picture: updates.picture } : {}),
+      ...(updates.resetToken !== undefined ? { resetToken: updates.resetToken } : {}),
+      ...(updates.resetTokenExpiry !== undefined ? { resetTokenExpiry: updates.resetTokenExpiry } : {}),
+    };
+    this.save();
+    return { ...this.data.users[idx] };
+  }
 }
 
 // Single instance for JSON store
@@ -385,6 +448,42 @@ const unifiedRepository = {
       return mongoRepository.updateFollowup(id, updates);
     }
     return jsonRepository.updateFollowup(id, updates);
+  },
+  async findUserByEmail(email) {
+    if (isConnectedToMongo && mongoRepository) {
+      return mongoRepository.findUserByEmail(email);
+    }
+    return jsonRepository.findUserByEmail(email);
+  },
+  async findUserById(id) {
+    if (isConnectedToMongo && mongoRepository) {
+      return mongoRepository.findUserById(id);
+    }
+    return jsonRepository.findUserById(id);
+  },
+  async findUserByGoogleId(googleId) {
+    if (isConnectedToMongo && mongoRepository) {
+      return mongoRepository.findUserByGoogleId(googleId);
+    }
+    return jsonRepository.findUserByGoogleId(googleId);
+  },
+  async findUserByResetToken(token) {
+    if (isConnectedToMongo && mongoRepository) {
+      return mongoRepository.findUserByResetToken(token);
+    }
+    return jsonRepository.findUserByResetToken(token);
+  },
+  async createUser(userData) {
+    if (isConnectedToMongo && mongoRepository) {
+      return mongoRepository.createUser(userData);
+    }
+    return jsonRepository.createUser(userData);
+  },
+  async updateUser(id, updates) {
+    if (isConnectedToMongo && mongoRepository) {
+      return mongoRepository.updateUser(id, updates);
+    }
+    return jsonRepository.updateUser(id, updates);
   },
   seedDefaultCrmData() {
     return jsonRepository.seedDefaultCrmData();
